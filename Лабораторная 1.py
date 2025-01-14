@@ -58,6 +58,37 @@ class ScissorsImplementation(Scissors):
     def sharpen(self) -> None:
         self.is_sharp = True
 
+class AutoDullingScissors(Scissors):
+    def __init__(self, blade_length: float, is_sharp: bool, durability: int):
+        """
+        Создание и подготовка к работе объекта "Самозатупляющиеся ножницы".
+
+        :param blade_length: Длина лезвия в сантиметрах.
+        :param is_sharp: Состояние остроты ножниц (True — острые, False — тупые).
+        :param durability: Количество раз, которое ножницы могут разрезать материал до затупления.
+
+        Примеры:
+        >>> scissors = AutoDullingScissors(12.0, True, 3)
+        """
+        super().__init__(blade_length, is_sharp)
+        if not isinstance(durability, int) or durability < 0:
+            raise ValueError("Износ должен быть положительным целым числом.")
+        self.durability = durability
+        self.initial_durability = durability
+
+    def cut(self, material: str) -> str:
+        if not self.is_sharp:
+            return f"Ножницы слишком тупые, чтобы разрезать {material}."
+        if self.durability <= 0:
+            self.is_sharp = False
+            return f"Ножницы затупились и не могут разрезать {material}."
+        self.durability -= 1
+        return f"Материал {material} успешно разрезан ножницами длиной {self.blade_length} см."
+
+    def sharpen(self) -> None:
+        self.is_sharp = True
+        self.durability = self.initial_durability
+
 
 if __name__ == "__main__":
     doctest.testmod()  # Тестирование примеров в документации
